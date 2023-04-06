@@ -1,16 +1,12 @@
 #include <stdlib.h>
 #include <stdio.h>
-#include "/../address_map_arm.h"
-#include "/../definitions.h"
-#include "/../cards_library.c"
-
-// Begin part1.s for Lab 5
-const unsigned char Uno_front_small_map[2464];
+#include "../address_map_arm.h"
+#include "../definitions.h"
+#include "../cards_library.c"
 
 void clear_screen(void);
-void draw_line ( int x0, int y0, int x1, int y1, short int line_color);
 void plot_pixel(int x, int y, short int line_color);
-void draw_card(int orgX, int orgY, int w, int h);
+void draw_card(int orgX, int orgY, int color, int number);
 void draw_back(int orgX, int orgY);
 
 volatile int pixel_buffer_start; // global variable
@@ -23,7 +19,7 @@ int main(void)
 
     clear_screen();
 
-	draw_card(0, 1, 50, 50);
+	draw_card(50, 50, 3, 1);
    
 }
 
@@ -32,13 +28,13 @@ void draw_back(int orgX, int orgY)
 	int i, j;
 	int data ;	
 	
-	for (i = 0; i < H ; i++)
+	for (i = 0; i < CARD_HEIGHT ; i++)
 	{		
-		for(j=0 ; j < W; j++)	
+		for(j=0 ; j < CARD_WIDTH; j++)	
 		{ 	
-			data = card_back[(i*W+j)*2+1] ;
+			data = card_back[(i*CARD_WIDTH+j)*2+1] ;
 			data = data << 8;
-			data += card_back[(i*W+j)*2];	
+			data += card_back[(i*CARD_WIDTH+j)*2];	
 			plot_pixel(orgX+j, orgY+i, data);
 			//printf(" x, y  = %d, %d,   data = %x, \n ", j, i,data );
 		}		
@@ -51,14 +47,14 @@ void draw_card(int orgX, int orgY, int color, int number)
 	int i, j;
 	int Pos, data ;
 	
-	Pos = color * CARD_SIZE * 12 + number * CARD_SIZE ;
-	for (i = 0; i < H ; i++)
+	Pos = color * COLOUR_SIZE + number * CARD_SIZE ;
+	for (i = 0; i < CARD_HEIGHT ; i++)
 	{		
-		for(j=0 ; j < W; j++)	
+		for(j=0 ; j < CARD_WIDTH; j++)	
 		{ 	
-			data = card_lib[Pos+(i*W+j)*2+1] ;
+			data = card_lib[Pos+(i*CARD_WIDTH+j)*2+1] ;
 			data = data << 8;
-			data += card_lib[Pos+(i*W+j)*2];	
+			data += card_lib[Pos+(i*CARD_WIDTH+j)*2];	
 			plot_pixel(orgX+j, orgY+i, data);
 			//printf(" x, y  = %d, %d,   data = %x, \n ", j, i,data );
 		}		
@@ -79,4 +75,3 @@ void clear_screen(void)
 			plot_pixel( x,  y, 0x0000); //0x001F);// test blue 0x0000);
 	}
 }
-

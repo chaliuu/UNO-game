@@ -21,10 +21,16 @@
 #define CARD_WIDTH 27
 #define CARD_HEIGHT 40
 #define CARD_SIZE 2160
+#define COLOUR_SIZE 25920
 
 #define FALSE 0
 #define TRUE 1
 
+
+//colours are represented as: 0:red, 1:yellow, 2:green, 3:blue, 4:black (special card)
+//numbers are defined as: 0-9 represent corresponding number, 10:skip, 11:plus 2
+//for back (special) cards: 0: change colour, 1: plus 4
+// e.g. a yellow skip would be defined as {int colour = 1; int number = 10};
 struct Card {
     int colour;
     int number;
@@ -33,3 +39,4 @@ struct Card {
 struct Card user_deck[10];
 struct Card ai_deck[10];
 struct Card curr_card;
+

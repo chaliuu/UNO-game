@@ -29,8 +29,10 @@
 
 //colours are represented as: 0:red, 1:yellow, 2:green, 3:blue, 4:black (special card)
 //numbers are defined as: 0-9 represent corresponding number, 10:skip, 11:plus 2
-//for back (special) cards: 0: change colour, 1: plus 4
+//for back (special) cards: 0: change colour, 1: plus 4,2: black card (to clear)
 // e.g. a yellow skip would be defined as {int colour = 1; int number = 10};
+//colours{0-3}numbers{0-11}
+//colour{4}numbers{0-1}
 struct Card {
     int colour;
     int number;
@@ -39,3 +41,8 @@ struct Card {
 struct Card user_deck[10];
 struct Card ai_deck[10];
 struct Card curr_card;
+struct Card random_card;
+
+bool whos_turn; // true -> 1 -> bots turn // false -> 0 -> player turn
+bool played;
+

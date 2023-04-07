@@ -39,4 +39,3 @@ struct Card {
 struct Card user_deck[10];
 struct Card ai_deck[10];
 struct Card curr_card;
-

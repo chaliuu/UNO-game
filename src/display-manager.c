@@ -12,10 +12,11 @@ void display_curr_card();
 void display_ai_deck();
 void display_user_deck();
 void display_deck();
+void update_display();
 
 volatile int pixel_buffer_start; // global variable
 
-int main(void)
+void update_display()
 {
     volatile int * pixel_ctrl_ptr = (int *)0xFF203020;
     /* Read location of the pixel buffer from the pixel buffer controller */

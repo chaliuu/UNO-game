@@ -1,13 +1,17 @@
 #include <stdlib.h>
 #include <stdio.h>
-#include "../address_map_arm.h"
-#include "../definitions.h"
-#include "../cards_library.c"
+#include "address_map_arm.h"
+#include "definitions.h"
+#include "cards_library.c"
 
 void clear_screen(void);
 void plot_pixel(int x, int y, short int line_color);
 void draw_card(int orgX, int orgY, int color, int number);
 void draw_back(int orgX, int orgY);
+void display_curr_card();
+void display_ai_deck();
+void display_user_deck();
+void display_deck();
 
 volatile int pixel_buffer_start; // global variable
 
@@ -19,8 +23,40 @@ int main(void)
 
     clear_screen();
 
-	draw_card(50, 50, 3, 1);
+	display_curr_card();
+	display_ai_deck();
+	display_user_deck();
+	display_deck();
    
+}
+
+void display_curr_card(){
+	draw_card(147, 100, curr_card.colour, curr_card.number);
+  printf(" %d  %d", curr_card.colour, curr_card.number);
+  //draw_card(147, 100, 2, 3);
+}
+
+void display_ai_deck(){
+	int i;
+	for(i = 0; i < 10; i++){
+    if(!(ai_deck[i].colour == 4 && ai_deck[i].number == 2)){
+      draw_back(319 - (CARD_WIDTH + 5)*(i+1), 10);
+    }
+	}
+	
+}
+
+void display_user_deck(){
+	int i;
+	for(i = 0; i < 10; i++){
+		draw_card(319 - (CARD_WIDTH + 10)*(i+1), 219 - CARD_HEIGHT - 10 - user_deck[i].ifSelected * 10, user_deck[i].colour, user_deck[i].number);
+	}
+
+}
+
+void display_deck(){
+	draw_back(80, 100);
+	draw_back(70, 100);
 }
 
 void draw_back(int orgX, int orgY)
@@ -44,6 +80,7 @@ void draw_back(int orgX, int orgY)
 
 void draw_card(int orgX, int orgY, int color, int number)
 {
+	// 
 	int i, j;
 	int Pos, data ;
 	

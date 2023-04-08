@@ -36,10 +36,11 @@
 struct Card {
     int colour;
     int number;
+    int ifSelected;
 };
 
-struct Card user_deck[10];
-struct Card ai_deck[10];
+struct Card user_deck[11];
+struct Card ai_deck[11];
 struct Card curr_card;
 struct Card random_card;
 

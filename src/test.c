@@ -10,6 +10,10 @@
 #define CARD_SIZE 2160
 #define COLOUR_SIZE 25920
 
+//character size
+#define CHAR_RESOLUTION_X 80
+#define CHAR_RESOLUTION_Y 60
+
 struct Card {
     int colour;
     int number;
@@ -20,6 +24,9 @@ struct Card user_deck[11];
 struct Card ai_deck[11];
 struct Card curr_card;
 struct Card random_card;
+
+char *message_string; // global variable
+
 
 const unsigned char card_back[2160];
 const unsigned char card_lib[110160];
@@ -32,8 +39,14 @@ void display_curr_card();
 void display_ai_deck();
 void display_user_deck();
 void display_deck();
+void print_char(int x, int y,  char char_print);
+void clear_character_all();
+void clear_character(int x_start, int y_start, int x_end,int y_end);
+void print_message(int x, int y, char * char_data);
+void update_message();
 
 volatile int pixel_buffer_start; // global variable
+volatile int char_buffer_start; // global variable
 
 void card_generator(){
     random_card.colour = rand()%5;
@@ -52,6 +65,11 @@ int main(void)
   volatile int * pixel_ctrl_ptr = (int *)0xFF203020;
   /* Read location of the pixel buffer from the pixel buffer controller */
   pixel_buffer_start = *pixel_ctrl_ptr;
+
+  volatile int * char_ctrl_ptr =  (int *)0xFF203030;
+	// Read location of the character buffer from the character buffer controller /
+	char_buffer_start = *char_ctrl_ptr; // address is  0xC9000000
+
 
   clear_screen();
 
@@ -91,10 +109,15 @@ int main(void)
             
   }
 
+  user_deck[2].ifSelected = 1;
+
   curr_card.colour = 2;
   curr_card.number = 3;
   curr_card.ifSelected = 0;          
 
+	message_string = "Draw Two Cards";
+
+  update_message();
 	display_curr_card();
   display_deck();
 	display_ai_deck();
@@ -103,17 +126,30 @@ int main(void)
    
 }
 
+void update_message(){
+	int i;
+	char index;
+	char * input_labels;
+  /*
+	for(i = 0; i < 10; i++){
+		index = i;
+		input_labels = "SW";
+		strcat(input_labels, index);
+		print_message(319 - (CARD_WIDTH + 5)*(i+1), 219, input_labels);
+	}*/
+
+	print_message(150, CARD_HEIGHT + 25, message_string);
+}
+
 void display_curr_card(){
-	draw_card(147, 100, curr_card.colour, curr_card.number);
-  printf(" %d  %d", curr_card.colour, curr_card.number);
-  //draw_card(147, 100, 2, 3);
+	draw_card(147, 80, curr_card.colour, curr_card.number);
 }
 
 void display_ai_deck(){
 	int i;
 	for(i = 0; i < 10; i++){
     if(!(ai_deck[i].colour == 4 && ai_deck[i].number == 2)){
-      draw_back(319 - (CARD_WIDTH + 5)*(i+1), 10);
+      draw_back(319 - (CARD_WIDTH + 5)*(i+1), 5);
     }
 	}
 	
@@ -122,14 +158,22 @@ void display_ai_deck(){
 void display_user_deck(){
 	int i;
 	for(i = 0; i < 10; i++){
-		draw_card(319 - (CARD_WIDTH + 10)*(i+1), 219 - CARD_HEIGHT - 10 - user_deck[i].ifSelected * 10, user_deck[i].colour, user_deck[i].number);
+		draw_card(319 - (CARD_WIDTH + 5)*(i+1), 219 - CARD_HEIGHT - 20 - user_deck[i].ifSelected * 10, user_deck[i].colour, user_deck[i].number);
 	}
 
 }
 
 void display_deck(){
-	draw_back(80, 100);
-	draw_back(70, 100);
+	draw_back(84, 80);
+	draw_back(82, 80);
+	draw_back(80, 80);
+	draw_back(78, 80);
+	draw_back(76, 80);
+	draw_back(74, 80);
+	draw_back(72, 80);
+	draw_back(70, 80);
+	draw_back(68, 80);
+	draw_back(66, 80);
 }
 
 void draw_back(int orgX, int orgY)
@@ -184,6 +228,48 @@ void clear_screen(void)
 		for( y=0; y< RESOLUTION_Y; y++)
 			plot_pixel( x,  y, 0x0000); //0x001F);// test blue 0x0000);
 	}
+}
+
+//char_print need to be in format of ASCII
+void print_char(int x, int y,  char char_print)
+{
+    *( char *)(char_buffer_start + (y << 7) + x ) = char_print;
+}
+
+void clear_character_all()
+{
+	int x, y;
+	for (x = 0; x < CHAR_RESOLUTION_X; x++)
+	{
+		for( y = 0; y < CHAR_RESOLUTION_Y; y++)
+			print_char( x,  y, 0x20); //wirte 0x20 to fill blank space
+	}
+}
+
+void clear_character(int x_start, int y_start, int x_end,int y_end)
+{
+	int x, y;
+	for (x = 0; x < (x_end - x_start+ 1); x++)
+	{
+		for( y = 0; (y < y_end - y_start + 1 ) ; y++)
+			print_char( x_start + x,  x_start + y, 0x20); //wirte 0x20 to fill blank space
+	}
+}
+
+void print_message(int x, int y, char * char_data)
+{
+	 char *data_ptr;
+	int i;
+	
+	data_ptr = char_data;
+	i = x;
+	while (*data_ptr)
+	{
+	 print_char( i,  y, *data_ptr);	
+	 i++;
+	 data_ptr++;
+	}
+
 }
 
 const unsigned char card_back[2160] = {

@@ -17,6 +17,10 @@
 #define RESOLUTION_X 320
 #define RESOLUTION_Y 240
 
+//character size
+#define CHAR_RESOLUTION_X 80
+#define CHAR_RESOLUTION_Y 60
+
 /* Constants for animation */
 #define CARD_WIDTH 27
 #define CARD_HEIGHT 40
@@ -41,8 +45,10 @@ struct Card {
 
 struct Card user_deck[11];
 struct Card ai_deck[11];
-struct Card curr_card;
+struct Card curr_card; 
 struct Card random_card;
+
+char *message_string; // global variable
 
 bool whos_turn; // true -> 1 -> bots turn // false -> 0 -> player turn
 bool played;

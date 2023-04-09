@@ -127,19 +127,18 @@ int main(void)
 }
 
 void update_message(){
-	int i;
-	char index;
-	char * input_labels;
-  /*
-	for(i = 0; i < 10; i++){
-		index = i;
-		input_labels = "SW";
-		strcat(input_labels, index);
-		print_message(319 - (CARD_WIDTH + 5)*(i+1), 219, input_labels);
-	}*/
-
-	print_message(150, CARD_HEIGHT + 25, message_string);
+	int x_start, y_start, x_end, y_end;
+	
+	x_start = 46;
+	y_start = 23;
+	
+	x_end = CHAR_RESOLUTION_X -1;
+	y_end = y_start + 6 ;// assume the message won't be longer than 7 lines
+	
+	clear_character(x_start, y_start, x_end, y_end); // clear previous meesage before update new message
+	print_message(x_start, y_start, message_string);
 }
+
 
 void display_curr_card(){
 	draw_card(147, 80, curr_card.colour, curr_card.number);
@@ -267,10 +266,16 @@ void print_message(int x, int y, char * char_data)
 	{
 	 print_char( i,  y, *data_ptr);	
 	 i++;
+	 if(i > (CHAR_RESOLUTION_X - 2)) //if message almost reach the end change to next line
+	 {
+		i = x ;
+		y += 1;	
+	 }
 	 data_ptr++;
 	}
 
 }
+
 
 const unsigned char card_back[2160] = {
   /*Pixel format: Red: 5 bit, Green: 6 bit, Blue: 5 bit*/

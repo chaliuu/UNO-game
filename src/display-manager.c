@@ -138,17 +138,16 @@ void clear_screen(void)
 }
 
 void update_message(){
-	int i;
-	char index;
-	char *input_labels;
-	for(i = 0; i < 10; i++){
-		char index = i;
-		input_lables = "SW";
-		strcat(input_labels, index);
-		print_message(319 - (CARD_WIDTH + 5)*(i+1), 219, input_labels);
-	}
-
-	print_message(200, CARD_HEIGHT + 25, message_string);
+	int x_start, y_start, x_end, y_end;
+	
+	x_start = 46;
+	y_start = 23;
+	
+	x_end = CHAR_RESOLUTION_X -1;
+	y_end = y_start + 6 ;// assume the message won't be longer than 7 lines
+	
+	clear_character(x_start, y_start, x_end, y_end); // clear previous meesage before update new message
+	print_message(x_start, y_start, message_string);
 }
 
 void clear_character_all()

@@ -44,9 +44,12 @@ struct Card {
 };
 
 struct Card user_deck[11];
-struct Card ai_deck[11];
+struct Card ai_deck[11]; 
 struct Card curr_card; 
 struct Card random_card;
+
+int ai_card_num;
+int user_card_num; 
 
 char *message_string; // global variable
 

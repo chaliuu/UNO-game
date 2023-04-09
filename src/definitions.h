@@ -50,6 +50,7 @@ struct Card random_card;
 
 char *message_string; // global variable
 
-bool whos_turn; // true -> 1 -> bots turn // false -> 0 -> player turn
+bool bot_turn; // true -> 1 -> bots turn // false -> 0 -> player turn
 bool played;
+int colour_changed;
 

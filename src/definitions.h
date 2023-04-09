@@ -47,6 +47,7 @@ struct Card user_deck[11];
 struct Card ai_deck[11];
 struct Card curr_card; 
 struct Card random_card;
+struct Card prev_card;
 
 char *message_string; // global variable
 

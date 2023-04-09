@@ -47,12 +47,14 @@ struct Card user_deck[11];
 struct Card ai_deck[11]; 
 struct Card curr_card; 
 struct Card random_card;
+struct Card prev_card;
 
 int ai_card_num;
 int user_card_num; 
 
 char *message_string; // global variable
 
-bool whos_turn; // true -> 1 -> bots turn // false -> 0 -> player turn
+bool bot_turn; // true -> 1 -> bots turn // false -> 0 -> player turn
 bool played;
+int colour_changed;
 

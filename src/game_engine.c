@@ -59,7 +59,7 @@ void easy_bot(){
         }
         
     }
-    whos_turn = false;
+    bot_turn = false;
 }
 
 
@@ -69,6 +69,29 @@ void easy_bot(){
 //will always take an extra card if there is no fit for colour changing cards
 //will not stack any special cards
 //void medium_bot(){}
+
+
+//if it passes rule check, the current card will be changed.
+//if its a change colour card, the previous card will be set to be the curret colour
+void user_input(struct Card user_deck){ 
+    if(rule_check_passed()){
+        user_deck.colour = curr_card.colour;
+        user_deck.number = curr_card.number;
+        if(user_deck.colour == 4){
+            scanf("%d", colour_changed);
+            prev_card.colour = curr_card.colour; 
+            prev_card.number = curr_card.number;
+            curr_card.colour = colour_changed;
+        }
+        shift_card(user_deck);
+
+    }
+    else{
+        printf("please choose another card");
+    }
+}
+
+
 
 
 
@@ -85,8 +108,7 @@ void shift_card(int j){
         ai_deck[k].number = ai_deck[k+1].number;
         ai_deck[11].colour = 4;
         ai_deck[11].number = 2;  
-    }
-   
+    } 
 }
 
 //generates a random card
@@ -223,7 +245,7 @@ int main(){
     ai_deck[0].number = 5;
     print_ai_deck();
     printf("\n");
-    /*curr_card.colour = 2; //green
+    curr_card.colour = 2; //green
     curr_card.number = 0; // zero
     easy_bot();
     printf("new deck: \n");
@@ -238,7 +260,7 @@ int main(){
     curr_card.number = 10; //skip
     easy_bot();
     printf("new deck: \n");
-    print_ai_deck();*/
+    print_ai_deck();
     curr_card.colour = 4; //black
     curr_card.number = 1; //plus four and change colour
     easy_bot();
@@ -248,8 +270,7 @@ int main(){
     curr_card.number = 11; //plus two
     easy_bot();
     printf("new deck: \n");
-    print_ai_deck();
-    
+    print_ai_deck();  
 
 }
 

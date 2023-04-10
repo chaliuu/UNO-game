@@ -3,24 +3,6 @@
 #include <stdbool.h>
 #include "definition.h"
 
-void user_input(struct Card user_deck){ 
-    if(rule_check_passed()){
-        user_deck.colour = curr_card.colour;
-        user_deck.number = curr_card.number;
-        if(user_deck.colour == 4){
-            scanf("%d", colour_changed);
-            prev_card.colour = curr_card.colour; 
-            prev_card.number = curr_card.number;
-            curr_card.colour = colour_changed;
-        }
-        shift_card(user_deck);
-
-    }
-    else{
-        printf("please choose another card");
-    }
-}
-
 //helper functions
 
 //shift the list down from the jth posistion

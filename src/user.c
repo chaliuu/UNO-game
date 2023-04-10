@@ -22,10 +22,10 @@ bool has_changed_colour; //check if a wild card has been played. User for checki
 
 void apply_card_action(){
     //check if Skip card
-    if(curr_card.number = 10){
+    if(curr_card.number == 10){
         bot_turn = true; //automatically bot's turn if true
     }//check if +2 card
-    else if(curr_card.number = 11){
+    else if(curr_card.number == 11){
         plustwo(user_deck); //draw 2 cards
     }else if(curr_card.colour == 4){
         has_changed_colour = true; //update colour has been changed -> different rulse check

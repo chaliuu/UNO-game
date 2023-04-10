@@ -52,9 +52,20 @@ struct Card prev_card;
 int ai_card_num;
 int user_card_num; 
 
+
 char *message_string; // global variable
 
 bool bot_turn; // true -> 1 -> bots turn // false -> 0 -> player turn
 bool played;
 int colour_changed;
+bool game_over;
+
+int numbers[] = {0,1,2,3,4,5,6,7,8,9,10,11};
+int colours[] = {4,4,4,4,4,4,4,0,0,0,0,0,0,0,0,0,0,0,0,
+1,1,1,1,1,1,1,1,1,1,1,1,
+2,2,2,2,2,2,2,2,2,2,2,2,
+3,3,3,3,3,3,3,3,3,3,3,3,
+};
+
+int special_numbers[] = {0,1};
 

@@ -1,5 +1,6 @@
 #include <stdlib.h>
 #include <stdio.h>
+#include <stdbool.h>
 /* Screen size. */
 #define RESOLUTION_X 320
 #define RESOLUTION_Y 240

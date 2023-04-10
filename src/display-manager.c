@@ -1,5 +1,6 @@
 #include <stdlib.h>
 #include <stdio.h>
+#include <stdbool.h>
 #include "address_map_arm.h"
 #include "definitions.h"
 #include "cards_library.c"
@@ -36,12 +37,7 @@ void update_display()
 
     clear_screen();
 
-	clear_character_all();
-	message_string = " This is a test";
-	print_message (10, 10, message_string);
-	message_string = " This is another test";
-	print_message (10, 30, message_string);
-
+	update_message();
 	display_curr_card();
 	display_ai_deck();
 	display_user_deck();

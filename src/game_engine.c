@@ -195,6 +195,7 @@ int plusone_easy(struct Card deck[11]){
 
 //initializes the ai_deck  
 void initializer(){
+    //ai deck
     for(int i = 0; i < (sizeof(ai_deck)/sizeof(ai_deck[i]));i++){
         card_generator();
         ai_deck[i] = random_card;
@@ -204,8 +205,28 @@ void initializer(){
             ai_deck[i].number = 2;
         }
             
-    }     
+    }
+    //user deck
+    for(int i = 0; i < (sizeof(user_deck)/sizeof(user_deck[i]));i++){
+        card_generator();
+        user_deck[i] = random_card;
+
+        if (i > 4){
+            user_deck[i].colour = 4;
+            user_deck[i].number = 2;
+        }
+            
+    }  
+    //currentcard
+    curr_card.colour = rand()%4;
+    curr_card.number =  rand()%12;
+
+    //ai card number, user card nunmber
+    ai_card_num = 5;
+    user_card_num = 5;
+
 }
+
 
 //prints the ai deck
 void print_ai_deck(){

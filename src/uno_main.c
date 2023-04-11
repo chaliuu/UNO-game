@@ -95,7 +95,7 @@ const unsigned char card_back[2160];
 const unsigned char card_lib[110160];
 const unsigned char Start_up[153600];
 
-MAIN_STATE Main_st = DISPLAY_STARTUP;
+volatile MAIN_STATE Main_st = DISPLAY_STARTUP;
 
 void clear_screen();
 void clear_area(int x_start, int y_start, int x_end, int y_end);
@@ -126,7 +126,7 @@ void card_generator();
 void bot();
 void shift_card(struct Card deck[11],int j);
 void plusfour_easy();
-int plusone_easy(struct Card deck[11]);
+void plusone_easy(struct Card deck[11]);
 void plustwo_easy();
 void delay(long int delay_time);
 
@@ -218,7 +218,8 @@ int main(void)
 				clear_character_all();	
 				initializer();
 				user_card_num = 5;
-				ai_card_num = 5 ;				
+				ai_card_num = 5 ;	
+				previous_switch_reading = 0 ;	//reset	previous reading		
 				display_curr_card();
 				display_deck();
 				display_ai_deck();
@@ -231,27 +232,31 @@ int main(void)
 			
 			case APPLY_CARD_TO_USER:
 				apply_card_action();
-        if(bot_turn){
-          Main_st = PLAY_BOT;
-        }else{
-				  Main_st = GET_USER_INPUT;
-        }	
+				if(bot_turn){
+				  Main_st = PLAY_BOT;
+				}else{
+						previous_switch_reading = 0 ;	//reset	previous reading
+						Main_st = GET_USER_INPUT;
+				}	
 				message_string = "Use switch to select card then press KEY0";
 				update_message(); 				
 			break;	
 
 			case GET_USER_INPUT:				
-				message_string = "STATE: GET USER INPUT "; 
-				update_debug_message(); //print out debug message				
+				//message_string = "STATE: GET USER INPUT "; 
+				//update_debug_message(); //print out debug message				
 				update_card_selection();
 				keys_read = read_key();
-				if(keys_read & KEY0)
+				if(keys_read & KEY0){
 					Main_st = CHK_USER_INPUT;
+					message_string = " "; //clear the message
+					update_message(); 						
+				}
 			break;
 
 			case CHK_USER_INPUT:				
-				message_string = "STATE: CHECK USER INPUT";
-				update_debug_message(); //print out debug message 
+				//message_string = "STATE: CHECK USER INPUT";
+				//update_debug_message(); //print out debug message 
 				if(if_valid())
 					Main_st = APPLY_USER_CARD;
 				else{
@@ -260,8 +265,8 @@ int main(void)
 			break;	
 			
 			case APPLY_USER_CARD:
-				message_string = "STATE: APPLY USER CARD";
-				update_debug_message(); //print out debug message 			
+				//message_string = "STATE: APPLY USER CARD";
+				//update_debug_message(); //print out debug message 			
 				make_move(card_index);
 				display_user_deck();
 				display_curr_card();
@@ -276,7 +281,7 @@ int main(void)
 			break;			
 			
 			case ASK_USER_SELECT_COLOUR:
-				message_string = "Select Colour: KEY3:Blue, KEY2:Green, KEY1:Yellow, KEY0: Red";
+				message_string = "Select Colour:   KEY3:Blue,                       KEY2:Green,                      KEY1:Yellow,                     KEY0: Red";
 				update_message(); 	
 				keys_read = read_until_get_key(); //loop until get key	
 				if(keys_read & KEY0)
@@ -295,8 +300,8 @@ int main(void)
 			break;				
 
 			case CHK_USER_WIN:
-				message_string = "STATE: Check User Win";
-				update_debug_message(); 				
+				//message_string = "STATE: Check User Win";
+				//update_debug_message(); 				
 				if(check_ifWin()){
 				  Main_st = GAME_OVER;
 				}else{
@@ -305,17 +310,15 @@ int main(void)
 			break;
 
 			case PLAY_BOT:
-				message_string = "STATE: Play BOT";	
-				update_debug_message(); 
-				bot();
-				display_ai_deck();
-				display_curr_card();
-        Main_st = CHK_BOT_WIN;
+				//message_string = "STATE: Play BOT";	
+				//update_debug_message(); 
+				//bot();
+				Main_st = CHK_BOT_WIN;
 			break;
 
 			case CHK_BOT_WIN:
-				message_string = "STATE: Check BOT win";	
-				update_debug_message(); 			
+				//message_string = "STATE: Check BOT win";	
+				//update_debug_message(); 			
 				if(check_ifWin()){
 					Main_st = GAME_OVER;
 				}else{
@@ -325,7 +328,7 @@ int main(void)
 			
 			case GAME_OVER:				
 				//print out debug message
-				message_string = "STATE: GAME OVER";
+				//message_string = "STATE: GAME OVER";
 				update_message();  			
 				if(if_user_won){
 				  message_string = "YOU WON!! :)";
@@ -361,6 +364,7 @@ void delay(long int delay_time)
 }
 
 void card_generator(){
+	/*
   int index1 = rand() % (sizeof(numbers) / sizeof(int));
   int index2= rand() % (sizeof(colours) / sizeof(int));
   int index3 = rand() % (sizeof(special_numbers) / sizeof(int));
@@ -371,7 +375,8 @@ void card_generator(){
   else{
     random_card.number = numbers[index1];
   }
-  /*random_card.colour = rand()%5;
+  */
+  random_card.colour = rand()%5;
   if (random_card.colour == 4){
     random_card.number = rand()%2;
   }
@@ -380,7 +385,7 @@ void card_generator(){
   }
 
   random_card.ifSelected = 0;
-}*/
+//}*/
 }
 
 
@@ -397,8 +402,11 @@ void apply_card_action(){
 
         //check if its +4 Wild card
         if(curr_card.number == 1){
-            plusfour(user_deck); //draw 4 cards if true
-            has_drawn = TRUE;
+          plusfour(user_deck); //draw 4 cards if true
+          has_drawn = TRUE;
+          message_string = "Draw Four Cards";
+          update_message();
+          delay(DELAY_TIME);
         }
     }//check if there is a playable card in a user's deck
     else if(!has_playable_card(user_deck)){
@@ -455,9 +463,6 @@ void make_move(int card_index){
     curr_card.ifSelected = 0;
     shift_card(user_deck, card_index);
     user_card_num --;
-    if(curr_card.colour== 4){
-      //CHANGE COLOUR!!!!
-    }
   }
 }
 
@@ -517,14 +522,13 @@ void plusone(struct Card deck[11]){
 bool has_playable_card(struct Card deck[11]){
     int i;
     for(i = 0; i < 10; i++){
-        if((deck[i].colour == curr_card.colour) || (deck[i].number == curr_card.number)){
-            return true;
-        }
-    else{
-        return false;
-    }
-	}
+        if((deck[i].colour == curr_card.colour) || (deck[i].number == curr_card.number)||(deck[i].colour == 4))
+            return true; // if any card match then return 
+       	}
+	//after checking all card and no match
+    return false;	
 }
+
 // ********* utility code end
 
 //initializes the ai_deck  
@@ -559,7 +563,7 @@ void initializer(){
 
 int read_until_get_key()
 {
-	volatile int data;
+	 int data;
 	
 	do {
 			data = read_key();
@@ -571,7 +575,7 @@ int read_until_get_key()
 
 void read_until_key_clear()
 {
-	volatile int temp;
+	 int temp;
 	//clean key input
 	do {
 	 	temp = read_key();
@@ -599,28 +603,28 @@ void update_card_selection()
 	int i;
 	int select_temp;	
 	
-	volatile int current_switch;
+	int current_switch;
 	
 	current_switch = read_switch();
 	if(current_switch != previous_switch_reading)
 	{		
 		previous_switch_reading = current_switch;
-		clear_user_deck(); 
+		//clear_user_deck(); 
 		for (i = 0; i < 10 ; i++)
 		{
 			select_temp = current_switch >> i ;
 			select_temp = select_temp & 0x0001;
 			user_deck[i].ifSelected = select_temp ;
-		}		
-	}	
-	display_user_deck();	
+		}	
+		display_user_deck();
+	}			
 }
 
 int read_switch()
 {
-	volatile int switch_reading;
+	 int switch_reading;
 	
-	volatile int * switch_ptr;
+	 int * switch_ptr;
 	
 	switch_ptr = (int *)0xFF200040;	
 	switch_reading = *switch_ptr;	
@@ -779,15 +783,13 @@ void display_ai_deck(){
 }
 
 void clear_user_deck(){
-	
-
 	clear_area(0, 219 - CARD_HEIGHT - 20 - 10, 319, 219 - 20);
-
 }
 
 
 void display_user_deck(){
 	int i;
+	clear_user_deck(); // need to clear user deck before new display
 	for(i = 0; i < 10; i++){
 		draw_card(319 - (CARD_WIDTH + 5)*(i+1), 219 - CARD_HEIGHT - 20 - user_deck[i].ifSelected * 10, user_deck[i].colour, user_deck[i].number);
 	}
@@ -1016,6 +1018,7 @@ void shift_card(struct Card deck[11],int j){
     for (k = j; k < 11; k++){
         deck[k].colour = deck[k+1].colour;
         deck[k].number = deck[k+1].number;
+		deck[k].ifSelected = deck[k+1].ifSelected;
         deck[11].colour = 4;
         deck[11].number = 2;  
     } 
@@ -1037,7 +1040,7 @@ void plustwo_easy(){
 }
 
 //picks up a card and decides to put it down or add it to the end of the deck
-int plusone_easy(struct Card deck[11]){
+void plusone_easy(struct Card deck[11]){
 	int i;
     //adds a card onto the deck
     card_generator();
@@ -1091,7 +1094,7 @@ int plusone_easy(struct Card deck[11]){
             //find a black spot and add it on
                 if(i == 10){
                     printf("game over");
-                    return 0;
+                    return ;
                 }
                 else if(deck[i].colour == 4 && deck[i].number == 2){
                     deck[i].number = random_card.number;
@@ -1109,7 +1112,7 @@ int plusone_easy(struct Card deck[11]){
             //find a black spot and add it on
             if(i == 11){
                 printf("game over");
-                return 0;
+                return ;
             }
             else if(deck[i].colour == 4 && deck[i].number == 2){
                 deck[i].number = random_card.number;

@@ -44,6 +44,9 @@
 #define CHAR_RESOLUTION_X 80
 #define CHAR_RESOLUTION_Y 60
 
+#define DELAY_TIME 600000	 // 3 sec for CPUlator
+//#define DELAY_TIME 8000000 // for FGPA
+
 typedef enum{
 	DISPLAY_STARTUP,
 	DISPLAY_RULES,
@@ -52,6 +55,7 @@ typedef enum{
 	GET_USER_INPUT,
 	CHK_USER_INPUT,
 	APPLY_USER_CARD,
+	ASK_USER_SELECT_COLOUR,	
 	CHK_USER_WIN,
 	PLAY_BOT,
 	CHK_BOT_WIN,	
@@ -106,6 +110,7 @@ void display_user_deck();
 void display_deck();
 void display_rules();
 void display_card_label();
+void display_current_colour();
 void print_char(int x, int y,  char char_print);
 void clear_character_all();
 void clear_character(int x_start, int y_start, int x_end,int y_end);
@@ -123,6 +128,7 @@ void shift_card(struct Card deck[11],int j);
 void plusfour_easy();
 int plusone_easy(struct Card deck[11]);
 void plustwo_easy();
+void delay(long int delay_time);
 
 
 
@@ -218,6 +224,7 @@ int main(void)
 				display_ai_deck();
 				display_user_deck();	
 				display_card_label();
+				display_current_colour();
 				Main_st = APPLY_CARD_TO_USER;				
 							
 			break;
@@ -251,18 +258,43 @@ int main(void)
 			case APPLY_USER_CARD:
 				message_string = "STATE: APPLY USER CARD";
 				update_debug_message(); //print out debug message 			
-        make_move(card_index);
-        display_user_deck();
-        //delay();
-        Main_st = CHK_USER_WIN;
-			break;
+				make_move(card_index);
+				display_user_deck();
+				display_current_colour();	
+				if(curr_card.colour == 4){
+					Main_st	= ASK_USER_SELECT_COLOUR;	
+				}
+				else{
+					Main_st	= CHK_USER_WIN ;
+					delay(DELAY_TIME);
+				}
+			break;			
+			
+			case ASK_USER_SELECT_COLOUR:
+				message_string = "Select Colour: KEY3:Blue, KEY2:Green, KEY1:Yellow, KEY0: Red";
+				update_message(); 	
+				keys_read = read_until_get_key(); //loop until get key	
+				if(keys_read & KEY0)
+					curr_card.colour = 0;
+				else if(keys_read & KEY1)
+					curr_card.colour = 1;	
+				else if(keys_read & KEY2)
+					curr_card.colour = 2;
+				else
+					curr_card.colour = 3;
+				
+				display_current_colour();
+				Main_st	= CHK_USER_WIN ;	
+				delay(DELAY_TIME);				
+					
+			break;				
 
 			case CHK_USER_WIN:
-        if(check_ifWin()){
-          Main_st = GAME_OVER;
-        }else{
-          Main_st = PLAY_BOT;
-        }
+				if(check_ifWin()){
+				  Main_st = GAME_OVER;
+				}else{
+				  Main_st = PLAY_BOT;
+				}
 			break;
 
 			case PLAY_BOT:
@@ -304,7 +336,20 @@ int main(void)
 }
 
 
+void delay(long int delay_time)
+{
+	long int i;
+	volatile int dummy_operation = 0;
+	
+	for ( i = 0; i < delay_time; i++)
+	{
+		dummy_operation += i;
+		dummy_operation -= i;
+	}
+}
+
 void card_generator(){
+  /*
    srand(time(NULL));
   int index1 = rand() % (sizeof(numbers) / sizeof(int));
   int index2= rand() % (sizeof(colours) / sizeof(int));
@@ -315,7 +360,16 @@ void card_generator(){
   }
   else{
     random_card.number = numbers[index1];
+  }*/
+  random_card.colour = rand()%5;
+  if (random_card.colour == 4){
+    random_card.number = rand()%2;
   }
+  else{
+    random_card.number = rand()%12; 
+  }
+
+  random_card.ifSelected = 0;
 }
 
 ///****** User function start
@@ -386,6 +440,7 @@ void make_move(int card_index){
   }else{
     curr_card.colour = user_deck[card_index].colour;
     curr_card.number = user_deck[card_index].number;
+    curr_card.ifSelected = 0;
     shift_card(user_deck, card_index);
     user_card_num --;
     if(curr_card.colour== 4){
@@ -431,7 +486,8 @@ void plusone(struct Card deck[11]){
     //printf("%d",random_card.colour);
     //printf("%d",random_card.number);
             //add the card to the deck
-    for(int i = 0; i < 11; i++){
+    int i;
+    for(i = 0; i < 11; i++){
     //find a black spot and add it on
         if(deck[i].colour == 4 && deck[i].number == 2){
             deck[i].number = random_card.number;
@@ -657,6 +713,28 @@ void display_card_label(){
 	print_message(x_start, y_start, message_string);
 }
 
+void display_current_colour(){
+	int x_start, y_start, x_end, y_end;
+	
+	x_start = 22;
+	y_start = 33;	
+	x_end =  x_start + 26;
+	y_end = y_start	;
+	clear_character(x_start, y_start, x_end, y_end); // clear previous meesage before update new message
+	if (curr_card.colour == 0)
+			message_string = "Current Colour : Red"	;	
+	else if (curr_card.colour == 1)
+			message_string = "Current Colour : Yellow"	;		
+	else if (curr_card.colour == 2)
+			message_string = "Current Colour : Green"	;			
+	else if (curr_card.colour == 3)
+			message_string = "Current Colour : Blue"	;			
+	else 
+			message_string = "Current Colour : All Colour"	;	
+		
+	print_message(x_start, y_start, message_string);	
+}
+
 void draw_startup()
 {
 	int i, j;	
@@ -839,7 +917,8 @@ void print_message(int x, int y, char * char_data)
 //will always take an extra card if there is no fit for colour changing cards
 //will not stack any special cards
 void bot(){
-    for (int i = 0; i < sizeof(ai_deck)/sizeof(ai_deck[i]); i++){
+  int i;
+    for (i = 0; i < sizeof(ai_deck)/sizeof(ai_deck[i]); i++){
         //if its a regular number card
         if((curr_card.colour == ai_deck[i].colour || curr_card.number == ai_deck[i].number) 
         && (((0 <= curr_card.colour)&&(curr_card.colour <= 3) && (0 <= curr_card.number)&&(curr_card.number <= 9)))){
@@ -996,7 +1075,8 @@ int plusone_easy(struct Card deck[11]){
         }
         else{
             //add the card to the deck
-            for(int i = 0; i < 11; i++){
+            int i;
+            for(i = 0; i < 11; i++){
             //find a black spot and add it on
                 if(i == 10){
                     printf("game over");
@@ -1014,7 +1094,7 @@ int plusone_easy(struct Card deck[11]){
         }
     }
     else{
-        for(int i = 0; i < 12;i++){
+        for(i = 0; i < 12;i++){
             //find a black spot and add it on
             if(i == 11){
                 printf("game over");
@@ -1037,7 +1117,8 @@ int plusone_easy(struct Card deck[11]){
 
 //prints the ai deck
 void print_ai_deck(){
-    for(int i = 0; i < sizeof(ai_deck)/sizeof(ai_deck[i]);i++){
+  int i;
+    for(i = 0; i < sizeof(ai_deck)/sizeof(ai_deck[i]);i++){
         printf("Colour: ");
         printf("%d",ai_deck[i].colour);
         printf("\tNumber: ");

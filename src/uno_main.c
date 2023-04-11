@@ -920,15 +920,14 @@ void print_message(int x, int y, char * char_data)
 //will always take an extra card if there is no fit for colour changing cards
 //will not stack any special cards
 void bot(){
-  int i;
-    for (i = 0; i < sizeof(ai_deck)/sizeof(ai_deck[i]); i++){
+    for (int i = 0; i < sizeof(ai_deck)/sizeof(ai_deck[i]); i++){
         //if its a regular number card
         if((curr_card.colour == ai_deck[i].colour || curr_card.number == ai_deck[i].number) 
         && (((0 <= curr_card.colour)&&(curr_card.colour <= 3) && (0 <= curr_card.number)&&(curr_card.number <= 9)))){
             //play the card
             curr_card.colour = ai_deck[i].colour;
             curr_card.number = ai_deck[i].number;
-            shift_card(i);
+            shift_card(ai_deck,i);
             prev_card.colour = 0;
             break;   
         }
@@ -960,7 +959,7 @@ void bot(){
                 if(ai_deck[i].colour == colour_changed ){
                     curr_card.colour = ai_deck[i].colour;
                     curr_card.number = ai_deck[i].number;
-                    shift_card(i);
+                    shift_card(ai_deck,i);
                     prev_card.colour = 0;
                     break;
                 }
@@ -990,7 +989,7 @@ void bot(){
                     curr_card.colour = ai_deck[i].colour;
                     curr_card.number = ai_deck[i].number;
                     played = true;
-                    shift_card(i);
+                    shift_card(ai_deck,i);
                     plusfour_easy();
                     prev_card.colour = 0;
                     break;
@@ -1110,8 +1109,7 @@ int plusone_easy(struct Card deck[11]){
         }
         else{
             //add the card to the deck
-            int i;
-            for(i = 0; i < 11; i++){
+            for(int i = 0; i < 11; i++){
             //find a black spot and add it on
                 if(i == 10){
                     printf("game over");
@@ -1129,7 +1127,7 @@ int plusone_easy(struct Card deck[11]){
         }
     }
     else{
-        for(i = 0; i < 12;i++){
+        for(int i = 0; i < 12;i++){
             //find a black spot and add it on
             if(i == 11){
                 printf("game over");
@@ -1147,7 +1145,6 @@ int plusone_easy(struct Card deck[11]){
         }
     }
 }
-
 //prints the ai deck
 void print_ai_deck(){
   int i;

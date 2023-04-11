@@ -1130,7 +1130,7 @@ void plusone_easy(struct Card deck[11]){
             for( i = 0; i < 11; i++){
             //find a black spot and add it on
                 if(i == 10){
-                    if_user_won = false;
+                    if_user_won = true;
                     break;
                 }
                 else if(deck[i].colour == 4 && deck[i].number == 2){
@@ -1149,7 +1149,7 @@ void plusone_easy(struct Card deck[11]){
         for( i = 0; i < 12;i++){
             //find a black spot and add it on
             if(i == 10){
-                if_user_won = false;
+                if_user_won = true;
                 break;
             }
             else if(deck[i].colour == 4 && deck[i].number == 2){

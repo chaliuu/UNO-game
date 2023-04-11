@@ -96,7 +96,7 @@ choose_colour(){
     //dk how to write yet lol
 }
 
-void check_ifWin(){
+bool check_ifWin(){
     if(user_card_num <= 0 || ai_card_num > 10){
         message_string = "You Won!";
         game_over = true;

@@ -43,11 +43,29 @@ struct Card {
     int ifSelected;
 };
 
+typedef enum{
+	DISPLAY_STARTUP,
+	DISPLAY_RULES,
+	GAME_INI,
+	APPLY_CARD_TO_USER,
+	GET_USER_INPUT,
+	CHK_USER_INPUT,
+	APPLY_USER_CARD,
+	CHK_USER_WIN,
+	APPLY_CARD_TO_AI,
+	PLAY_AI_CARD,
+	CHK_AI_WIN,	
+	GAME_OVER
+}MAIN_STATE;
+
+
 struct Card user_deck[11];
 struct Card ai_deck[11]; 
 struct Card curr_card; 
 struct Card random_card;
 struct Card prev_card;
+
+int card_index;
 
 int ai_card_num;
 int user_card_num; 
@@ -59,6 +77,7 @@ bool bot_turn; // true -> 1 -> bots turn // false -> 0 -> player turn
 bool played;
 int colour_changed;
 bool game_over;
+bool if_user_won;
 
 int numbers[] = {0,1,2,3,4,5,6,7,8,9,10,11};
 int colours[] = {4,4,4,4,4,4,4,0,0,0,0,0,0,0,0,0,0,0,0,

@@ -44,8 +44,8 @@
 #define CHAR_RESOLUTION_X 80
 #define CHAR_RESOLUTION_Y 60
 
-//#define DELAY_TIME 600000	 // 3 sec for CPUlator
-#define DELAY_TIME 8000000 // for FGPA
+#define DELAY_TIME 600000	 // 3 sec for CPUlator
+//#define DELAY_TIME 8000000 // for FGPA
 
 typedef enum{
 	DISPLAY_STARTUP,
@@ -242,7 +242,7 @@ int main(void)
 				}else{
 						previous_switch_reading = 0 ;	//reset	previous reading
 						Main_st = GET_USER_INPUT;
-						message_string = "Use switch to select card then press KEY0";
+						message_string = "USER: Use switch to select card then press KEY0";
 						update_message(); 							
 				}	
 			
@@ -341,9 +341,17 @@ int main(void)
 				//message_string = "STATE: GAME OVER";
 				//update_message();  			
 				if(if_user_won){
-				  message_string = "YOU WON!! :)";
+          if(user_card_num <= 0){
+            message_string = "you got rid of all your cards. YOU WON!! :)";
+          }else{
+            message_string = "AI has more than 10 cards. YOU WON!! :)";
+          }
 				}else{
-				  message_string = "You Lost :(";
+          if(user_card_num > 0){
+            message_string = "you have more than 10 cards. You Lost :(";
+          }else{
+            message_string = "AI got rid of all its cards. You Lost :(";
+          }
 				}
 				update_message();  	
 				keys_read = read_until_get_key(); //loop until get key	
@@ -707,16 +715,16 @@ void display_rules()
 	message_string = "RULE 3: Use Corresponding Slide Switch to select the card ";	
 	print_message(x, y, message_string);
 	y += 2;	
-  message_string = "RULE 5: Card played must be of the same colour or same number as the current shown card. Or, it can be a special black card";	
+  message_string = "RULE 4: Card played must be of the same colour or same number as the current shown card. Or, it can be a special black card";	
 	print_message(x, y, message_string);
 	y += 3;	
-  message_string = "RULE 6: Can only play 1 card at a time. No stacking cards!";	
+  message_string = "RULE 5: Can only play 1 card at a time. No stacking cards!";	
 	print_message(x, y, message_string);
 	y += 2;	
-  message_string = "RULE 7: Use Key0 to play selected the card ";	
+  message_string = "RULE 6: Use Key0 to play selected the card ";	
 	print_message(x, y, message_string);
 	y += 2;	
-	message_string = "RULE 8: Use Key3 to restart the game";	
+	message_string = "RULE 7: Use Key3 to restart the game";	
 	print_message(x, y, message_string);
 
 	

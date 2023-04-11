@@ -220,6 +220,7 @@ int main(void)
 				user_card_num = 5;
 				ai_card_num = 5 ;	
 				user_card_over_maximum = false;
+				has_drawn = false;
 				previous_switch_reading = 0 ;	//reset	previous reading		
 				display_curr_card();
 				display_deck();
@@ -330,6 +331,7 @@ int main(void)
 				if(check_ifWin()){
 					Main_st = GAME_OVER;
 				}else{
+					has_drawn = false;
 					Main_st = APPLY_CARD_TO_USER;
 				}
 			break;
@@ -409,6 +411,7 @@ void apply_card_action(){
 			return;
 			}
         plustwo(user_deck); //draw 2 cards
+		has_drawn = TRUE;
     }else if(curr_card.colour == 4){
         has_changed_colour = TRUE; //update colour has been changed -> different rulse check
 

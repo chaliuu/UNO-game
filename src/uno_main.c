@@ -1067,6 +1067,7 @@ void bot(){
 
 
 
+
 //this bot only knows how to play number all cards
 //will always take in cards for plus cards
 //will always take an extra card if there is no fit for colour changing cards
@@ -1109,6 +1110,7 @@ void plustwo_easy(){
 
 }
 
+//picks up a card and decides to put it down or add it to the end of the deck
 //picks up a card and decides to put it down or add it to the end of the deck
 void plusone_easy(struct Card deck[11]){
 	int i;

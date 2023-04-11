@@ -394,11 +394,13 @@ void card_generator(){
     random_card.number = numbers[index1];
   }
   */
-  random_card.colour = rand()%5;
-  if (random_card.colour == 4){
+  int if_special = rand()%13;
+  if (if_special == 4){
+    random_card.colour = 4;
     random_card.number = rand()%2;
   }
   else{
+    random_card.colour = rand()%4;
     random_card.number = rand()%12; 
   }
 
@@ -478,12 +480,12 @@ bool if_valid(){
   */
    //check if cards: are of same colour, are of same number, is special card  
   }else if((user_deck[card_index].colour == 4)||
-			((curr_card.colour == 4)&& (user_deck[card_index].colour =colour_changed))||
+			((curr_card.colour == 4)&& (user_deck[card_index].colour == colour_changed))||
 			((curr_card.colour != 4)&& (user_deck[card_index].number == curr_card.number ))||
 			((curr_card.colour != 4)&& (user_deck[card_index].colour == curr_card.colour )))	{
 				return true; 
   }else{
-		message_string = "Selected Card not playable! Please reselect a card with the name colour or number and press KEY0";
+		message_string = "Selected Card not playable! Please reselect a card with the same colour or number and press KEY0";
 		update_message();
 		return false;
   }    

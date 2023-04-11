@@ -280,6 +280,8 @@ int main(void)
 					Main_st	= ASK_USER_SELECT_COLOUR;	
 				}else{
 					Main_st	= CHK_USER_WIN ;
+					message_string = "AI Running "; 
+					update_message(); 						
 					delay(DELAY_TIME);
 				}
 			break;			
@@ -299,6 +301,8 @@ int main(void)
 				
 				display_current_colour();
 				Main_st	= CHK_USER_WIN ;	
+				message_string = "AI Running "; 
+				update_message(); 		
 				delay(DELAY_TIME);				
 					
 			break;				

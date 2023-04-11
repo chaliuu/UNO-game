@@ -231,7 +231,11 @@ int main(void)
 			
 			case APPLY_CARD_TO_USER:
 				apply_card_action();
-				Main_st = GET_USER_INPUT;	
+        if(bot_turn){
+          Main_st = PLAY_BOT;
+        }else{
+				  Main_st = GET_USER_INPUT;
+        }	
 				message_string = "Use switch to select card then press KEY0";
 				update_message(); 				
 			break;	

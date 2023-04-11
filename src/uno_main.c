@@ -331,7 +331,7 @@ int main(void)
 				if(check_ifWin()){
 					Main_st = GAME_OVER;
 				}else{
-					has_drawn = false;
+					//has_drawn = false;
 					Main_st = APPLY_CARD_TO_USER;
 				}
 			break;
@@ -435,7 +435,7 @@ void apply_card_action(){
             has_drawn = TRUE;
         }
     }//check if there is a playable card in a user's deck
-    else if(!has_playable_card(user_deck)){
+    if(!has_playable_card(user_deck)){
         plusone(user_deck);
         has_drawn = TRUE;
     }else{

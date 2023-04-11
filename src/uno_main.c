@@ -357,8 +357,6 @@ void delay(long int delay_time)
 }
 
 void card_generator(){
-  /*
-   srand(time(NULL));
   int index1 = rand() % (sizeof(numbers) / sizeof(int));
   int index2= rand() % (sizeof(colours) / sizeof(int));
   int index3 = rand() % (sizeof(special_numbers) / sizeof(int));
@@ -368,8 +366,8 @@ void card_generator(){
   }
   else{
     random_card.number = numbers[index1];
-  }*/
-  random_card.colour = rand()%5;
+  }
+  /*random_card.colour = rand()%5;
   if (random_card.colour == 4){
     random_card.number = rand()%2;
   }
@@ -378,7 +376,9 @@ void card_generator(){
   }
 
   random_card.ifSelected = 0;
+}*/
 }
+
 
 ///****** User function start
 void apply_card_action(){
@@ -526,7 +526,7 @@ bool has_playable_card(struct Card deck[11]){
 //initializes the ai_deck  
 void initializer(){
 	int i;
-    //ai deck
+     //ai deck
     for( i = 0; i < (sizeof(ai_deck)/sizeof(ai_deck[i]));i++){
         card_generator();
         ai_deck[i] = random_card;
@@ -552,7 +552,6 @@ void initializer(){
     curr_card.colour = rand()%4;
     curr_card.number =  rand()%12;      
 }
-
 
 int read_until_get_key()
 {

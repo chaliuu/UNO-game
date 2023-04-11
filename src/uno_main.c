@@ -44,8 +44,8 @@
 #define CHAR_RESOLUTION_X 80
 #define CHAR_RESOLUTION_Y 60
 
-#define DELAY_TIME 600000	 // 3 sec for CPUlator
-//#define DELAY_TIME 8000000 // for FGPA
+//#define DELAY_TIME 600000	 // 3 sec for CPUlator
+#define DELAY_TIME 8000000 // for FGPA
 
 typedef enum{
 	DISPLAY_STARTUP,
@@ -163,7 +163,7 @@ bool has_changed_colour; //check if a wild card has been played. User for checki
 
 volatile int user_card_num , ai_card_num ; 
 
-volatile bool bot_turn, played ;
+volatile bool bot_turn, played, user_card_over_maximum ;
 
 // utility function
 void plusfour(struct Card deck[11]);
@@ -219,6 +219,7 @@ int main(void)
 				initializer();
 				user_card_num = 5;
 				ai_card_num = 5 ;	
+				user_card_over_maximum = false;
 				previous_switch_reading = 0 ;	//reset	previous reading		
 				display_curr_card();
 				display_deck();
@@ -234,17 +235,21 @@ int main(void)
 				apply_card_action();
 				if(bot_turn){
 				  Main_st = PLAY_BOT;
+				}else if(user_card_over_maximum){					
+					Main_st	= GAME_OVER ;
+					if_user_won = false ;
 				}else{
 						previous_switch_reading = 0 ;	//reset	previous reading
 						Main_st = GET_USER_INPUT;
+						message_string = "Use switch to select card then press KEY0";
+						update_message(); 							
 				}	
-				message_string = "Use switch to select card then press KEY0";
-				update_message(); 				
+			
 			break;	
 
 			case GET_USER_INPUT:				
-				//message_string = "STATE: GET USER INPUT "; 
-				//update_debug_message(); //print out debug message				
+				message_string = "STATE: GET USER INPUT "; 
+				update_debug_message(); //print out debug message				
 				update_card_selection();
 				keys_read = read_key();
 				if(keys_read & KEY0){
@@ -255,8 +260,8 @@ int main(void)
 			break;
 
 			case CHK_USER_INPUT:				
-				//message_string = "STATE: CHECK USER INPUT";
-				//update_debug_message(); //print out debug message 
+				message_string = "STATE: CHECK USER INPUT";
+				update_debug_message(); //print out debug message 
 				if(if_valid())
 					Main_st = APPLY_USER_CARD;
 				else{
@@ -265,16 +270,15 @@ int main(void)
 			break;	
 			
 			case APPLY_USER_CARD:
-				//message_string = "STATE: APPLY USER CARD";
-				//update_debug_message(); //print out debug message 			
+				message_string = "STATE: APPLY USER CARD";
+				update_debug_message(); //print out debug message 			
 				make_move(card_index);
 				display_user_deck();
 				display_curr_card();
 				display_current_colour();	
 				if(curr_card.colour == 4){
 					Main_st	= ASK_USER_SELECT_COLOUR;	
-				}
-				else{
+				}else{
 					Main_st	= CHK_USER_WIN ;
 					delay(DELAY_TIME);
 				}
@@ -285,13 +289,13 @@ int main(void)
 				update_message(); 	
 				keys_read = read_until_get_key(); //loop until get key	
 				if(keys_read & KEY0)
-					curr_card.colour = 0;
+					colour_changed = 0;
 				else if(keys_read & KEY1)
-					curr_card.colour = 1;	
+					colour_changed = 1;	
 				else if(keys_read & KEY2)
-					curr_card.colour = 2;
+					colour_changed = 2;
 				else
-					curr_card.colour = 3;
+					colour_changed = 3;
 				
 				display_current_colour();
 				Main_st	= CHK_USER_WIN ;	
@@ -300,8 +304,8 @@ int main(void)
 			break;				
 
 			case CHK_USER_WIN:
-				//message_string = "STATE: Check User Win";
-				//update_debug_message(); 				
+				message_string = "STATE: Check User Win";
+				update_debug_message(); 				
 				if(check_ifWin()){
 				  Main_st = GAME_OVER;
 				}else{
@@ -329,7 +333,7 @@ int main(void)
 			case GAME_OVER:				
 				//print out debug message
 				//message_string = "STATE: GAME OVER";
-				update_message();  			
+				//update_message();  			
 				if(if_user_won){
 				  message_string = "YOU WON!! :)";
 				}else{
@@ -396,24 +400,29 @@ void apply_card_action(){
         bot_turn = TRUE; //automatically bot's turn if true
     }//check if +2 card
     else if(curr_card.number == 11){
+		 if(user_card_num >= 9){
+			 user_card_over_maximum = 1;
+			return;
+			}
         plustwo(user_deck); //draw 2 cards
     }else if(curr_card.colour == 4){
         has_changed_colour = TRUE; //update colour has been changed -> different rulse check
 
         //check if its +4 Wild card
         if(curr_card.number == 1){
-          plusfour(user_deck); //draw 4 cards if true
-          has_drawn = TRUE;
-          message_string = "Draw Four Cards";
-          update_message();
-          delay(DELAY_TIME);
+			 if(user_card_num >= 7){
+				 user_card_over_maximum = 1;
+				return;
+				}			
+            plusfour(user_deck); //draw 4 cards if true
+            has_drawn = TRUE;
         }
     }//check if there is a playable card in a user's deck
     else if(!has_playable_card(user_deck)){
         plusone(user_deck);
         has_drawn = TRUE;
     }else{
-      has_drawn = FALSE;
+        has_drawn = FALSE;
     }    
 }
 
@@ -442,7 +451,7 @@ bool if_valid(){
 			return false; //return false if no user input but user hasn't drawn
     }
     return true; //return true if no input but user has drawn
-	  
+/*	  
   }else if(user_deck[card_index].colour != curr_card.colour && user_deck[card_index].number != curr_card.number && user_deck[card_index].colour != 4){
     //check if cards: are of same colour, are of same number, is special card
 		message_string = "Selected Card not playable! Please reselect a card with the name colour or number and press KEY0";
@@ -450,7 +459,19 @@ bool if_valid(){
 		return false;
   }else{
     return true;
-  }
+  }  
+  */
+   //check if cards: are of same colour, are of same number, is special card  
+  }else if((user_deck[card_index].colour == 4)||
+			((curr_card.colour == 4)&& (user_deck[card_index].colour =colour_changed))||
+			((curr_card.colour != 4)&& (user_deck[card_index].number == curr_card.number ))||
+			((curr_card.colour != 4)&& (user_deck[card_index].colour == curr_card.colour )))	{
+				return true; 
+  }else{
+		message_string = "Selected Card not playable! Please reselect a card with the name colour or number and press KEY0";
+		update_message();
+		return false;
+  }    
 }
 
 
@@ -461,6 +482,7 @@ void make_move(int card_index){
     curr_card.colour = user_deck[card_index].colour;
     curr_card.number = user_deck[card_index].number;
     curr_card.ifSelected = 0;
+	colour_changed = curr_card.colour;
     shift_card(user_deck, card_index);
     user_card_num --;
   }
@@ -558,7 +580,8 @@ void initializer(){
     }  
     //currentcard
     curr_card.colour = rand()%4;
-    curr_card.number =  rand()%12;      
+    curr_card.number =  rand()%12;   
+	colour_changed	=	curr_card.colour;
 }
 
 int read_until_get_key()
@@ -730,19 +753,26 @@ void display_card_label(){
 
 void display_current_colour(){
 	int x_start, y_start, x_end, y_end;
+	int colour;
 	
 	x_start = 22;
 	y_start = 33;	
 	x_end =  x_start + 26;
 	y_end = y_start	;
 	clear_character(x_start, y_start, x_end, y_end); // clear previous meesage before update new message
-	if (curr_card.colour == 0)
+	
+	if(curr_card.colour ==4)
+		colour = colour_changed;
+	else
+		colour = curr_card.colour ;
+	
+	if (colour == 0)
 			message_string = "Current Colour : Red"	;	
-	else if (curr_card.colour == 1)
+	else if (colour == 1)
 			message_string = "Current Colour : Yellow"	;		
-	else if (curr_card.colour == 2)
+	else if (colour == 2)
 			message_string = "Current Colour : Green"	;			
-	else if (curr_card.colour == 3)
+	else if (colour == 3)
 			message_string = "Current Colour : Blue"	;			
 	else 
 			message_string = "Current Colour : All Colour"	;	
@@ -941,6 +971,7 @@ void bot(){
             shift_card(ai_deck, i);
             break;   
         }
+		/* //we won't have color ==4 when apply to 
         //if its a black card
         if(prev_card.colour == 4){
             //if its change colour
@@ -976,7 +1007,7 @@ void bot(){
                 //must also find the right colour to put
                 break;
             }
-        }
+        }*/
         // if its skip or plus two
         if(curr_card.number >= 10 && curr_card.number <= 11){
             // if its skip
@@ -1054,7 +1085,6 @@ void plusone_easy(struct Card deck[11]){
             curr_card.colour = random_card.colour;
             curr_card.number = random_card.number;
             played = true;
-			
         }
         else if(random_card.colour == 4){
                 if(random_card.number == 0){

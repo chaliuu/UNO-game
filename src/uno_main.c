@@ -1041,8 +1041,6 @@ int plusone_easy(struct Card deck[11]){
 	int i;
     //adds a card onto the deck
     card_generator();
-    printf("%d",random_card.colour);
-    printf("%d",random_card.number);
     if (!played){
     //if the card can be played
         if((curr_card.colour == random_card.colour || curr_card.number == random_card.number) 
@@ -1051,6 +1049,7 @@ int plusone_easy(struct Card deck[11]){
             curr_card.colour = random_card.colour;
             curr_card.number = random_card.number;
             played = true;
+			
         }
         else if(random_card.colour == 4){
                 if(random_card.number == 0){
@@ -1108,7 +1107,7 @@ int plusone_easy(struct Card deck[11]){
         for( i = 0; i < 12;i++){
             //find a black spot and add it on
             if(i == 11){
-                printf("game over");
+               //game over
                 return 0;
             }
             else if(deck[i].colour == 4 && deck[i].number == 2){
@@ -1122,6 +1121,7 @@ int plusone_easy(struct Card deck[11]){
 
         }
     }
+	return 0;
 }
 
 

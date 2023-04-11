@@ -709,7 +709,7 @@ void display_rules()
 	y += 2;	
   message_string = "RULE 5: Card played must be of the same colour or same number as the current shown card. Or, it can be a special black card";	
 	print_message(x, y, message_string);
-	y += 2;	
+	y += 3;	
   message_string = "RULE 6: Can only play 1 card at a time. No stacking cards!";	
 	print_message(x, y, message_string);
 	y += 2;	

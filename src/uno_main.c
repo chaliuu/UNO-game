@@ -518,6 +518,24 @@ bool has_playable_card(struct Card deck[11]){
 //initializes the ai_deck  
 void initializer(){
 	int i;
+    initializer_ai();
+    //user deck
+    for( i = 0; i < (sizeof(user_deck)/sizeof(user_deck[i]));i++){
+        card_generator();
+        user_deck[i] = random_card;
+        if (i > 3){
+            user_deck[i].colour = 4;
+            user_deck[i].number = 2;
+        }
+            
+    }  
+    //currentcard
+    curr_card.colour = rand()%4;
+    curr_card.number =  rand()%12;      
+}
+
+void initializer_ai(){
+	int i;
     //ai deck
     for( i = 0; i < (sizeof(ai_deck)/sizeof(ai_deck[i]));i++){
         card_generator();
@@ -529,22 +547,7 @@ void initializer(){
         }
             
     }
-    //user deck
-    for( i = 0; i < (sizeof(user_deck)/sizeof(user_deck[i]));i++){
-        card_generator();
-        user_deck[i] = random_card;
-
-        if (i > 4){
-            user_deck[i].colour = 4;
-            user_deck[i].number = 2;
-        }
-            
-    }  
-    //currentcard
-    curr_card.colour = rand()%4;
-    curr_card.number =  rand()%12;      
 }
-
 
 int read_until_get_key()
 {
@@ -925,21 +928,43 @@ void bot(){
             //play the card
             curr_card.colour = ai_deck[i].colour;
             curr_card.number = ai_deck[i].number;
-            shift_card(ai_deck, i);
+            shift_card(i);
+            prev_card.colour = 0;
             break;   
         }
+        else if((ai_deck[i].colour == 4) && (((0 <= curr_card.colour)&&(curr_card.colour <= 3) &&(0 <= curr_card.number)&&(curr_card.number <= 9)))){
+            if (ai_deck[i].number == 0){
+                //change colour
+                int index2= rand() % (sizeof(colours) / sizeof(int));
+                random_card.colour = colours[index2];
+                colour_changed = random_card.colour;
+                curr_card.colour = random_card.colour;
+                curr_card.number = random_card.number;
+
+            }
+            else if (ai_deck[i].number == 1){
+                // plus four and change colour
+                int index2= rand() % (sizeof(colours) / sizeof(int));
+                random_card.colour = colours[index2];
+                colour_changed = random_card.colour;
+                curr_card.colour = random_card.colour;
+                curr_card.number = random_card.number;
+            }
+
+        }
         //if its a black card
-        if(prev_card.colour == 4){
+        else if(prev_card.colour == 4){
             //if its change colour
             if(prev_card.number == 0){
                 //bot must put down the right colour otherwise plus 1
-                if(ai_deck[i].colour == curr_card.colour ){
+                if(ai_deck[i].colour == colour_changed ){
                     curr_card.colour = ai_deck[i].colour;
                     curr_card.number = ai_deck[i].number;
-                    shift_card(ai_deck, i);
+                    shift_card(i);
+                    prev_card.colour = 0;
                     break;
                 }
-                //or else it plays a colour change/+4 card as well
+                //or else it plays a colour change
                 else if(ai_deck[i].colour == 4){
                     int index2= rand() % (sizeof(colours) / sizeof(int));
                     random_card.colour = colours[index2];
@@ -948,27 +973,40 @@ void bot(){
                         curr_card.colour = ai_deck[i].colour;
                         curr_card.number = ai_deck[i].number;
                     }
+                    prev_card.colour = 0;
                     break;
 
                 }
                 else{
                     plusone_easy(ai_deck);
+                    prev_card.colour = 0;
                     break;
                 }
             }
             //if its plus four (includes change colour)
-            if(curr_card.number == 1){
+            else if(prev_card.number == 1){
+                //must also find the right colour to put
+                if(ai_deck[i].colour == colour_changed ){
+                    curr_card.colour = ai_deck[i].colour;
+                    curr_card.number = ai_deck[i].number;
+                    played = true;
+                    shift_card(i);
+                    plusfour_easy();
+                    prev_card.colour = 0;
+                    break;
+                }
                 //adds four to ai deck
                 plusfour_easy();
-                //must also find the right colour to put
+                prev_card.colour = 0;
                 break;
             }
         }
         // if its skip or plus two
-        if(curr_card.number >= 10 && curr_card.number <= 11){
+        else if(curr_card.number >= 10 && curr_card.number <= 11){
             // if its skip
             if(curr_card.number == 10){
                 //skips the bots turn
+                bot_turn = false;
                 break;
             }
             //if its plus 2
@@ -1039,6 +1077,7 @@ int plusone_easy(struct Card deck[11]){
             curr_card.colour = random_card.colour;
             curr_card.number = random_card.number;
             played = true;
+
         }
         else if(random_card.colour == 4){
                 if(random_card.number == 0){
@@ -1047,6 +1086,7 @@ int plusone_easy(struct Card deck[11]){
                     colour_changed = random_card.colour;
                     curr_card.colour = random_card.colour;
                     curr_card.number = random_card.number;
+                    prev_card.colour = 0;
                     played = true;
 
                 }
@@ -1056,6 +1096,7 @@ int plusone_easy(struct Card deck[11]){
                     colour_changed = random_card.colour;
                     curr_card.colour = random_card.colour;
                     curr_card.number = random_card.number;
+                    prev_card.colour = 0;
                     played = true;
                     //and the user ceck adds 4
                     
@@ -1066,12 +1107,6 @@ int plusone_easy(struct Card deck[11]){
             bot_turn = true;
             curr_card.colour = random_card.colour;
             curr_card.number = random_card.number;
-        }
-        else if(random_card.number == 11){
-            // user adds two cards
-            curr_card.colour = random_card.colour;
-            curr_card.number = random_card.number;
-            
         }
         else{
             //add the card to the deck
@@ -1112,8 +1147,6 @@ int plusone_easy(struct Card deck[11]){
         }
     }
 }
-
-
 
 //prints the ai deck
 void print_ai_deck(){

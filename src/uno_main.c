@@ -413,7 +413,7 @@ void apply_card_action(){
         plusone(user_deck);
         has_drawn = TRUE;
     }else{
-        has_drawn = FALSE;
+      has_drawn = FALSE;
     }    
 }
 
@@ -1054,6 +1054,7 @@ void plusone_easy(struct Card deck[11]){
             curr_card.colour = random_card.colour;
             curr_card.number = random_card.number;
             played = true;
+			
         }
         else if(random_card.colour == 4){
                 if(random_card.number == 0){

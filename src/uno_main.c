@@ -969,6 +969,7 @@ void bot(){
             curr_card.colour = ai_deck[i].colour;
             curr_card.number = ai_deck[i].number;
             shift_card(ai_deck, i);
+            ai_card_num--;
             break;   
         }
 		/* //we won't have color ==4 when apply to 
@@ -980,6 +981,7 @@ void bot(){
                 if(ai_deck[i].colour == curr_card.colour ){
                     curr_card.colour = ai_deck[i].colour;
                     curr_card.number = ai_deck[i].number;
+                    ai_card_num--;
                     shift_card(ai_deck, i);
                     break;
                 }
@@ -1124,12 +1126,13 @@ void plusone_easy(struct Card deck[11]){
             for( i = 0; i < 11; i++){
             //find a black spot and add it on
                 if(i == 10){
-                    printf("game over");
-                    return ;
+                    if_user_won = false;
+                    break;
                 }
                 else if(deck[i].colour == 4 && deck[i].number == 2){
                     deck[i].number = random_card.number;
                     deck[i].colour = random_card.colour;
+                    ai_card_num++;
                     break;
                 }
                 else{ //search until we find an empty spot
@@ -1141,13 +1144,14 @@ void plusone_easy(struct Card deck[11]){
     else{
         for( i = 0; i < 12;i++){
             //find a black spot and add it on
-            if(i == 11){
-                printf("game over");
-                return ;
+            if(i == 10){
+                if_user_won = false;
+                break;
             }
             else if(deck[i].colour == 4 && deck[i].number == 2){
                 deck[i].number = random_card.number;
                 deck[i].colour = random_card.colour;
+                ai_card_num++;
                 break;
             }
             else{ //search until we find an empty spot

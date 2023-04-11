@@ -560,10 +560,11 @@ void plusone(struct Card deck[11]){
 //loops through the deck and deck if there are playable cards in the deck
 bool has_playable_card(struct Card deck[11]){
     int i;
-    for(i = 0; i < 10; i++){
-        if((deck[i].colour == curr_card.colour) || (deck[i].number == curr_card.number)||(deck[i].colour == 4))
-            return true; // if any card match then return 
-       	}
+    for(i = 0; i < user_card_num; i++){
+      if((deck[i].colour == curr_card.colour) || (deck[i].number == curr_card.number)||(deck[i].colour == 4)){
+        return true; // if any card match then return 
+      }
+    }
 	//after checking all card and no match
     return false;	
 }
@@ -723,9 +724,9 @@ void display_rules()
   message_string = "RULE 5: Can only play 1 card at a time. No stacking cards!";	
 	print_message(x, y, message_string);
 	y += 2;	
-  message_string = "RULE 6: Use Key0 to play selected the card ";	
+  message_string = "RULE 6: Use Key0 to play selected the card. Or not play card after automatically drawing card. ";	
 	print_message(x, y, message_string);
-	y += 2;	
+	y += 3;	
 	message_string = "RULE 7: Use Key3 to restart the game";	
 	print_message(x, y, message_string);
 

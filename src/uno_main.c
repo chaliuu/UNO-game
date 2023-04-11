@@ -995,21 +995,24 @@ void bot(){
             ai_card_num--;
             break;   
         }
-		/* //we won't have color ==4 when apply to 
+		 //we won't have color ==4 when apply to 
         //if its a black card
-        if(prev_card.colour == 4){
+        if(curr_card.colour == 4){
             //if its change colour
-            if(prev_card.number == 0){
+            if(curr_card.number == 0){
                 //bot must put down the right colour otherwise plus 1
-                if(ai_deck[i].colour == curr_card.colour ){
+                if(ai_deck[i].colour == colour_changed){
                     curr_card.colour = ai_deck[i].colour;
                     curr_card.number = ai_deck[i].number;
                     ai_card_num--;
                     shift_card(ai_deck, i);
                     break;
                 }
+                else{
+                    continue;
+                }
                 //or else it plays a colour change/+4 card as well
-                else if(ai_deck[i].colour == 4){
+                /*else if(ai_deck[i].colour == 4){
                     int index2= rand() % (sizeof(colours) / sizeof(int));
                     random_card.colour = colours[index2];
                     colour_changed = random_card.colour;
@@ -1019,20 +1022,29 @@ void bot(){
                     }
                     break;
 
-                }
-                else{
-                    plusone_easy(ai_deck);
-                    break;
-                }
+                }*/                        
+                plusone_easy(ai_deck);
+                break;
+                
             }
             //if its plus four (includes change colour)
             if(curr_card.number == 1){
+                if(ai_deck[i].colour == colour_changed){
+                    curr_card.colour = ai_deck[i].colour;
+                    curr_card.number = ai_deck[i].number;
+                    ai_card_num--;
+                    shift_card(ai_deck, i);
+                    break;
+                }
+                else{
+                    continue;
+                }
                 //adds four to ai deck
                 plusfour_easy();
                 //must also find the right colour to put
                 break;
             }
-        }*/
+        }
         // if its skip or plus two
         if(curr_card.number >= 10 && curr_card.number <= 11){
             // if its skip
@@ -1050,6 +1062,7 @@ void bot(){
     }
     bot_turn = false;
 }
+
 
 
 

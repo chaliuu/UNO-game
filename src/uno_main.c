@@ -707,10 +707,16 @@ void display_rules()
 	message_string = "RULE 3: Use Corresponding Slide Switch to select the card ";	
 	print_message(x, y, message_string);
 	y += 2;	
-  message_string = "RULE 4: Use Key0 selected the card ";	
+  message_string = "RULE 5: Card played must be of the same colour or same number as the current shown card. Or, it can be a special black card";	
 	print_message(x, y, message_string);
 	y += 2;	
-	message_string = "RULE 5: Use Key3 to restart the game";	
+  message_string = "RULE 6: Can only play 1 card at a time. No stacking cards!";	
+	print_message(x, y, message_string);
+	y += 2;	
+  message_string = "RULE 7: Use Key0 to play selected the card ";	
+	print_message(x, y, message_string);
+	y += 2;	
+	message_string = "RULE 8: Use Key3 to restart the game";	
 	print_message(x, y, message_string);
 
 	

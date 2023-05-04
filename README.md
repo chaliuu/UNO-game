@@ -25,8 +25,8 @@ at once<br>
 4. Once the switch is on, the card will pop up<br>
 5. Press KEY0 to submit the card <br>
 6. The AI should play a card according to the current card<br>
- a. Our AI is having trouble operating with the VGA but works in C <br>
- b. So instead the game is more like solitaire, where the user will play based on the
+ &nbsp; a. Our AI is having trouble operating with the VGA but works in C <br>
+ &nbsp; b. So instead the game is more like solitaire, where the user will play based on the
  current deck<br>
 7. Playing a plus four card or change colour card will prompt the change colour screen<br>
 

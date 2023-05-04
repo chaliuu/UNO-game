@@ -1,8 +1,6 @@
 # UNO-game
-A Uno game with built in AI to be played on an ARM Soc connected to a VGA display
+An Uno game with built in AI to be played on an ARM Soc connected to a VGA display
 
-"bello" we working hard i need sleep
- 
 ### Background 
 This program is an attempt at imitating a digital version of the popular card game UNO. The
 rules of the game are almost entirely based on official UNO rules except for the fact players are

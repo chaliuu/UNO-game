@@ -32,7 +32,7 @@ at once<br>
  current deck<br>
 7. Playing a plus four card or change colour card will prompt the change colour screen<br>
 
-![image](https://user-images.githubusercontent.com/47972556/236296737-55b4c89d-40c6-4542-9ec3-e6fa8eff68fa.png)
+![image](https://user-images.githubusercontent.com/47972556/236296737-55b4c89d-40c6-4542-9ec3-e6fa8eff68fa.png)<br>
 8. Each of the keys corresponds to one of the colours<br>
 9. Skip cards will skip the turn of the ai and go back to the player<br>
 10. Plus two cards should add two cards to the ai deck<br>
